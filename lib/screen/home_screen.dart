@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:schedule/component/calendar.dart';
+import 'package:schedule/component/schedule_card.dart';
 import 'package:schedule/component/today_banner.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -35,6 +36,18 @@ class _HomeScreenState extends State<HomeScreen> {
               scheduleCount: 3,
               selectedDay: selectedDay,
             ),
+            const SizedBox(
+              height: 8.0,
+            ),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8.0),
+              child: ScheduleCard(
+                color: Colors.red,
+                content: '프로그래밍 공부',
+                startTime: 8,
+                endTime: 12,
+              ),
+            )
           ],
         ),
       ),
