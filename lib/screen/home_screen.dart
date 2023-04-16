@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:schedule/component/calendar.dart';
+import 'package:schedule/component/schedule_bottom_sheet.dart';
 import 'package:schedule/component/schedule_card.dart';
 import 'package:schedule/component/today_banner.dart';
+import 'package:schedule/const/colors.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -21,6 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: renderFloatingActionButton(),
       body: SafeArea(
         child: Column(
           children: [
@@ -39,29 +42,25 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(
               height: 8.0,
             ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: ListView.separated(
-                    itemCount: 10,
-                    separatorBuilder: (context, index) {
-                      return const SizedBox(
-                        height: 8.0,
-                      );
-                    },
-                    itemBuilder: (context, index) {
-                      return ScheduleCard(
-                        color: Colors.red,
-                        content: '프로그래밍 공부 $index',
-                        startTime: 8,
-                        endTime: 12,
-                      );
-                    }),
-              ),
-            )
+            const _ScheduleList()
           ],
         ),
       ),
+    );
+  }
+
+  FloatingActionButton renderFloatingActionButton() {
+    return FloatingActionButton(
+      onPressed: () {
+        showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            builder: (_) {
+              return const ScheduleBottomSheet();
+            });
+      },
+      backgroundColor: PRIMARY_COLOR,
+      child: const Icon(Icons.add),
     );
   }
 
@@ -70,5 +69,33 @@ class _HomeScreenState extends State<HomeScreen> {
       this.selectedDay = selectedDay;
       this.focusedDay = selectedDay;
     });
+  }
+}
+
+class _ScheduleList extends StatelessWidget {
+  const _ScheduleList();
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: ListView.separated(
+            itemCount: 10,
+            separatorBuilder: (context, index) {
+              return const SizedBox(
+                height: 8.0,
+              );
+            },
+            itemBuilder: (context, index) {
+              return ScheduleCard(
+                color: Colors.red,
+                content: '프로그래밍 공부 $index',
+                startTime: 8,
+                endTime: 12,
+              );
+            }),
+      ),
+    );
   }
 }
