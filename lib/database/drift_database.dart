@@ -18,7 +18,20 @@ part 'drift_database.g.dart';
 //  _$LocalDatabase 'drift_database.g.dart' 생성되면서 drift가 만들어줌
 class LocalDatabase extends _$LocalDatabase {
   LocalDatabase() : super(_openConnection());
+
+  Future<int> createSchedule(SchedulesCompanion data) =>
+      into(schedules).insert(data);
+  Future<int> createCategoryColors(CategoryColorsCompanion data) =>
+      into(categoryColors).insert(data);
+
+  Future<List<CategoryColor>> getCategoryColors() =>
+      select(categoryColors).get();
+
+  // 테이블 상태 버전
+  @override
+  int get schemaVersion => 1;
 }
+
 // 어떤 위치에 지정한 파일로 데이터 베이스 만듬
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {
