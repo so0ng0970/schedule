@@ -15,7 +15,7 @@ part 'drift_database.g.dart';
     CategoryColors,
   ],
 )
-//  _$LocalDatabase 'drift_database.g.dart' 생성되면서 drift가 만들어줌
+//  _$LocalDatabase 'drift_database.g.dart' 생성되면서 drift가 만들어준다
 class LocalDatabase extends _$LocalDatabase {
   LocalDatabase() : super(_openConnection());
 
