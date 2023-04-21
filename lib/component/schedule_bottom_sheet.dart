@@ -10,6 +10,7 @@ class ScheduleBottomSheet extends StatefulWidget {
 }
 
 class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
+  final GlobalKey<FormState> formKey = GlobalKey();
   @override
   Widget build(BuildContext context) {
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
@@ -31,23 +32,29 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                 right: 8,
                 top: 16.0,
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  _Time(),
-                  SizedBox(
-                    height: 16.0,
-                  ),
-                  _Content(),
-                  SizedBox(
-                    height: 16.0,
-                  ),
-                  _ColorPicker(),
-                  SizedBox(
-                    height: 8.0,
-                  ),
-                  _SaveButton(),
-                ],
+              child: Form(
+                // 폼의 컨트롤러 textfield 관리를 할 수 있다
+                key: formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const _Time(),
+                    const SizedBox(
+                      height: 16.0,
+                    ),
+                    const _Content(),
+                    const SizedBox(
+                      height: 16.0,
+                    ),
+                    const _ColorPicker(),
+                    const SizedBox(
+                      height: 8.0,
+                    ),
+                    _SaveButton(
+                      onPressed: onSavePressed,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -55,10 +62,24 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
       ),
     );
   }
+
+  void onSavePressed() {
+    // formkey는 생성을 했는데 Form 위젯과 결합을 안했을 때
+    if (formKey.currentState == null) {
+      return;
+    }
+
+    if (formKey.currentState!.validate()) {
+      print('에러가 없다');
+    } else {
+      print('에러가 있따 ');
+    }
+  }
 }
 
 class _SaveButton extends StatelessWidget {
-  const _SaveButton();
+  final VoidCallback onPressed;
+  const _SaveButton({required this.onPressed, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +90,7 @@ class _SaveButton extends StatelessWidget {
             style: ElevatedButton.styleFrom(
               backgroundColor: PRIMARY_COLOR,
             ),
-            onPressed: () {},
+            onPressed: onPressed,
             child: const Text('저장'),
           ),
         ),

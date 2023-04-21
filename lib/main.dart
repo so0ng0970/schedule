@@ -39,7 +39,7 @@ void main() async {
       );
     }
   }
-  print(await database.getCategoryColors());
+
   runApp(const MyApp());
 }
 
