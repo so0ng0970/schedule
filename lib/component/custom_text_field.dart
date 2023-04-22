@@ -43,7 +43,7 @@ class CustomTextField extends StatelessWidget {
       maxLines: isTime ? 1 : null,
       expands: !isTime,
       keyboardType: isTime ? TextInputType.number : TextInputType.multiline,
-      // 숫자 외 글자 불가능
+      // 숫자 외 글자  불가능
       inputFormatters: isTime ? [FilteringTextInputFormatter.digitsOnly] : [],
       decoration: InputDecoration(
         border: InputBorder.none,
