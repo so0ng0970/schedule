@@ -37,10 +37,20 @@ class CustomTextField extends StatelessWidget {
         if (value == null || value.isEmpty) {
           return '값을 입력해주세요';
         }
+        if (isTime) {
+          int time = int.parse(value);
+          if (time < 0) {
+            return '0 이상의 숫자를 입력해주세요';
+          }
+          if (time > 24) {
+            return '24 이하의 숫자를 입력해주세요';
+          }
+        }
         return null;
       },
       cursorColor: Colors.grey,
       maxLines: isTime ? 1 : null,
+      maxLength: isTime ? null : 500,
       expands: !isTime,
       keyboardType: isTime ? TextInputType.number : TextInputType.multiline,
       // 숫자 외 글자  불가능

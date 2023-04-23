@@ -35,6 +35,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
               child: Form(
                 // 폼의 컨트롤러 textfield 관리를 할 수 있다
                 key: formKey,
+                autovalidateMode: AutovalidateMode.always,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -68,12 +69,8 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
     if (formKey.currentState == null) {
       return;
     }
-
     if (formKey.currentState!.validate()) {
-      print('에러가 없다');
-    } else {
-      print('에러가 있따 ');
-    }
+    } else {}
   }
 }
 
