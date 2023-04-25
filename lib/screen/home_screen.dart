@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:schedule/component/calendar.dart';
 import 'package:schedule/component/schedule_bottom_sheet.dart';
 import 'package:schedule/component/schedule_card.dart';
 import 'package:schedule/component/today_banner.dart';
 import 'package:schedule/const/colors.dart';
+import 'package:schedule/database/drift_database.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -13,7 +15,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  DateTime selectedDay = DateTime(
+  DateTime selectedDay = DateTime.utc(
     DateTime.now().year,
     DateTime.now().month,
     DateTime.now().day,
@@ -42,7 +44,9 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(
               height: 8.0,
             ),
-            const _ScheduleList()
+            _ScheduleList(
+              selectedDate: selectedDay,
+            )
           ],
         ),
       ),
@@ -75,27 +79,42 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class _ScheduleList extends StatelessWidget {
-  const _ScheduleList();
+  final DateTime selectedDate;
+  const _ScheduleList({required this.selectedDate});
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: ListView.separated(
-            itemCount: 10,
-            separatorBuilder: (context, index) {
-              return const SizedBox(
-                height: 8.0,
-              );
-            },
-            itemBuilder: (context, index) {
-              return ScheduleCard(
-                color: Colors.red,
-                content: '프로그래밍 공부 $index',
-                startTime: 8,
-                endTime: 12,
-              );
+        child: StreamBuilder<List<Schedule>>(
+            stream: GetIt.I<LocalDatabase>().watchSchedules(),
+            builder: (context, snapshot) {
+              print(snapshot.data);
+              List<Schedule> schedules = [];
+              if (snapshot.hasData) {
+                schedules = snapshot.data!
+                    .where((element) => element.date == selectedDate)
+                    .toList();
+                print('--------');
+                print(selectedDate);
+                print(schedules);
+              }
+              return ListView.separated(
+                  itemCount: 10,
+                  separatorBuilder: (context, index) {
+                    return const SizedBox(
+                      height: 8.0,
+                    );
+                  },
+                  itemBuilder: (context, index) {
+                    return ScheduleCard(
+                      color: Colors.red,
+                      content: '프로그래밍 공부 $index',
+                      startTime: 8,
+                      endTime: 12,
+                    );
+                  });
             }),
       ),
     );
