@@ -6,6 +6,7 @@ import 'package:schedule/component/schedule_card.dart';
 import 'package:schedule/component/today_banner.dart';
 import 'package:schedule/const/colors.dart';
 import 'package:schedule/database/drift_database.dart';
+import 'package:schedule/model/schedule_with_color.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -87,7 +88,7 @@ class _ScheduleList extends StatelessWidget {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: StreamBuilder<List<Schedule>>(
+        child: StreamBuilder<List<ScheduleWithColor>>(
             stream: GetIt.I<LocalDatabase>().watchSchedules(selectedDate),
             builder: (context, snapshot) {
               print(snapshot.data);
@@ -109,12 +110,16 @@ class _ScheduleList extends StatelessWidget {
                     );
                   },
                   itemBuilder: (context, index) {
-                    final schedule = snapshot.data![index];
+                    final scheduleWithColor = snapshot.data![index];
                     return ScheduleCard(
-                      color: Colors.blue,
-                      content: schedule.content,
-                      startTime: schedule.startTime,
-                      endTime: schedule.endTime,
+                      color: Color(
+                        int.parse(
+                            'FF${scheduleWithColor.categoryColor.hexCode}',
+                            radix: 16),
+                      ),
+                      content: scheduleWithColor.schedule.content,
+                      startTime: scheduleWithColor.schedule.startTime,
+                      endTime: scheduleWithColor.schedule.endTime,
                     );
                   });
             }),

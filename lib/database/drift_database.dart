@@ -6,6 +6,7 @@ import 'package:schedule/model/category_color.dart';
 import 'package:schedule/model/schedule.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
+import 'package:schedule/model/schedule_with_color.dart';
 // private 값까지 불러 올 수 있다.
 part 'drift_database.g.dart';
 
@@ -27,12 +28,25 @@ class LocalDatabase extends _$LocalDatabase {
   Future<List<CategoryColor>> getCategoryColors() =>
       select(categoryColors).get();
   // 업데이트 된 값을 계속 받을 수 있음
-  Stream<List<Schedule>> watchSchedules(DateTime date) {
+  Stream<List<ScheduleWithColor>> watchSchedules(DateTime date) {
     // 정석방법
-    // final query = select(schedules);
-    // query.where((tbl) => tbl.date.equals(date));
-    // return query.watch();
-    
+    final query = select(schedules).join([
+      innerJoin(
+        categoryColors,
+        categoryColors.id.equalsExp(schedules.colorID),
+      )
+    ]);
+    query.where(schedules.date.equals(date));
+    return query.watch().map(
+          (rows) => rows
+              .map(
+                (row) => ScheduleWithColor(
+                  categoryColor: row.readTable(categoryColors),
+                  schedule: row.readTable(schedules),
+                ),
+              )
+              .toList(),
+        );
 
     // int num = 3;
     // // string '3'
@@ -41,7 +55,7 @@ class LocalDatabase extends _$LocalDatabase {
     // final resp2 = num..toString();
 
     // 정석방법이랑 같음
-    return (select(schedules)..where((tbl) => tbl.date.equals(date))).watch();
+    // return (select(schedules)..where((tbl) => tbl.date.equals(date))).watch();
   }
 
   // 테이블 상태 버전
