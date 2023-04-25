@@ -16,6 +16,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
   int? startTime;
   int? endTime;
   String? content;
+  int? selectedColorId;
   @override
   Widget build(BuildContext context) {
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
@@ -66,17 +67,19 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                     FutureBuilder<List<CategoryColor>>(
                         future: GetIt.I<LocalDatabase>().getCategoryColors(),
                         builder: (context, snapshot) {
-                          print(snapshot.data);
+                          if (snapshot.hasData &&
+                              selectedColorId == null &&
+                              snapshot.data!.isNotEmpty) {
+                            selectedColorId = snapshot.data![0].id;
+                          }
                           return _ColorPicker(
-                            colors: snapshot.hasData
-                                ? snapshot.data!
-                                    .map(
-                                      (e) => Color(
-                                        int.parse('FF${e.hexCode}', radix: 16),
-                                      ),
-                                    )
-                                    .toList()
-                                : [],
+                            colors: snapshot.hasData ? snapshot.data! : [],
+                            selectedColorId: selectedColorId,
+                            colorIdsetter: (int id) {
+                              setState(() {
+                                selectedColorId = id;
+                              });
+                            },
                           );
                         }),
                     const SizedBox(
@@ -132,24 +135,48 @@ class _SaveButton extends StatelessWidget {
   }
 }
 
+typedef ColorIdsetter = Function(int id);
+
 class _ColorPicker extends StatelessWidget {
-  final List<Color> colors;
-  const _ColorPicker({required this.colors});
+  final List<CategoryColor> colors;
+  final int? selectedColorId;
+  final ColorIdsetter colorIdsetter;
+
+  const _ColorPicker(
+      {required this.colorIdsetter,
+      required this.selectedColorId,
+      required this.colors});
 
   @override
   Widget build(BuildContext context) {
     return Wrap(
       spacing: 8.0,
-      children: colors.map((e) => renderColor(e)).toList(),
+      children: colors
+          .map(
+            (e) => GestureDetector(
+              onTap: () {
+                colorIdsetter(e.id);
+              },
+              child: renderColor(e, selectedColorId == e.id),
+            ),
+          )
+          .toList(),
     );
   }
 
-  Widget renderColor(Color color) {
+  Widget renderColor(CategoryColor color, bool isSelected) {
     return Container(
       decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: color,
-      ),
+          shape: BoxShape.circle,
+          color: Color(
+            int.parse('FF${color.hexCode}', radix: 16),
+          ),
+          border: isSelected
+              ? Border.all(
+                  color: Colors.grey[850]!,
+                  width: 3.0,
+                )
+              : null),
       width: 32.0,
       height: 32.0,
     );
