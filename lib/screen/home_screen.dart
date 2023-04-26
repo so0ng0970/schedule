@@ -110,15 +110,23 @@ class _ScheduleList extends StatelessWidget {
                   },
                   itemBuilder: (context, index) {
                     final scheduleWithColor = snapshot.data![index];
-                    return ScheduleCard(
-                      color: Color(
-                        int.parse(
-                            'FF${scheduleWithColor.categoryColor.hexCode}',
-                            radix: 16),
+                    return Dismissible(
+                      key: ObjectKey(scheduleWithColor.schedule.id),
+                      direction: DismissDirection.endToStart,
+                      onDismissed: (DismissDirection direction) {
+                        GetIt.I<LocalDatabase>()
+                            .removeSchedule(scheduleWithColor.schedule.id);
+                      },
+                      child: ScheduleCard(
+                        color: Color(
+                          int.parse(
+                              'FF${scheduleWithColor.categoryColor.hexCode}',
+                              radix: 16),
+                        ),
+                        content: scheduleWithColor.schedule.content,
+                        startTime: scheduleWithColor.schedule.startTime,
+                        endTime: scheduleWithColor.schedule.endTime,
                       ),
-                      content: scheduleWithColor.schedule.content,
-                      startTime: scheduleWithColor.schedule.startTime,
-                      endTime: scheduleWithColor.schedule.endTime,
                     );
                   });
             }),

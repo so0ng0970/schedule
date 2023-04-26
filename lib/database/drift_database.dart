@@ -27,6 +27,11 @@ class LocalDatabase extends _$LocalDatabase {
 
   Future<List<CategoryColor>> getCategoryColors() =>
       select(categoryColors).get();
+
+  // 삭제 쿼리
+  Future<int> removeSchedule(int id) =>
+      (delete(schedules)..where((tbl) => tbl.id.equals(id))).go();
+
   // 업데이트 된 값을 계속 받을 수 있음
   Stream<List<ScheduleWithColor>> watchSchedules(DateTime date) {
     // 정석방법
