@@ -7,10 +7,12 @@ class CustomTextField extends StatelessWidget {
   // true - 시간 , false - 내용
   final bool isTime;
   final FormFieldSetter<String> onSaved;
+  final String initialValue;
   const CustomTextField(
       {required this.onSaved,
       required this.isTime,
       required this.label,
+      required this.initialValue,
       super.key});
 
   @override
@@ -49,7 +51,7 @@ class CustomTextField extends StatelessWidget {
             return '0 이상의 숫자를 입력해주세요';
           }
           if (time > 24) {
-            return '24 이하의 숫자를 입력해주세요';
+            return '2 이하의 숫자를 입력해주세요';
           }
         }
         return null;
@@ -58,6 +60,7 @@ class CustomTextField extends StatelessWidget {
       maxLines: isTime ? 1 : null,
       maxLength: isTime ? null : 500,
       expands: !isTime,
+      initialValue: initialValue,
       keyboardType: isTime ? TextInputType.number : TextInputType.multiline,
       // 숫자 외 글자  불가능
       inputFormatters: isTime ? [FilteringTextInputFormatter.digitsOnly] : [],
